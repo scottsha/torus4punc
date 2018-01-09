@@ -690,6 +690,7 @@ def arctwist( cpat, a0, a1, power=1, cpts=False ):
         seq = [ -foo for foo in seq[::-1] ]
     return [a0]+seq+[a1]
 
+
 def dehn_twist( cpat,  bpat, power=1 ):
     #Compute the power-th dehn twist of b about c    T_c(b)
     #with c middle embeddec and b side embedded
@@ -716,5 +717,7 @@ def geo_intersect( ipat, jpat):
     sufhigh = 2*ibe
     dn = dehn_twist( ipat, jpat, sufhigh )
     dnp1 = dehn_twist( ipat, dn )
+    #chane this to  dnp1 = dehn_twist( ipat, jpat, sufhigh+1 ) immediately
+    dnp1 = dehn_twist(ipat, jpat, sufhigh + 1)
     q = dnp1[e] - dn[e]
-    return int(q / ibe)
+    return q // ibe
