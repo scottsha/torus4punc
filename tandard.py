@@ -625,7 +625,21 @@ def order4rotate( ipat ):
     a =tuple( ipat[ (foo+3)%12 ] for foo in range(12))
     return a
 
-
+def involution( ipat ):
+    #Apply a hyperbolic involution that keeps the triangulation.
+    i0=ipat[9]
+    i1=ipat[1]
+    i2=ipat[11]
+    i3=ipat[6]
+    i4=ipat[10]
+    i5=ipat[8]
+    i6=ipat[3]
+    i7=ipat[7]
+    i8=ipat[5]
+    i9=ipat[0]
+    i10=ipat[4]
+    i11=ipat[2]
+    return (i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11)
 hug_edge={
     #start from a0 hug edge on the signed side
     -12:(12, -1),
@@ -716,8 +730,44 @@ def geo_intersect( ipat, jpat):
     e = ipat.index(ibe)
     sufhigh = 2*ibe
     dn = dehn_twist( ipat, jpat, sufhigh )
-    dnp1 = dehn_twist( ipat, dn )
-    #chane this to  dnp1 = dehn_twist( ipat, jpat, sufhigh+1 ) immediately
+    # dnp1 = dehn_twist( ipat, dn )
+    dnp1 = dehn_twist(ipat, jpat, sufhigh + 1)
     dnp1 = dehn_twist(ipat, jpat, sufhigh + 1)
     q = dnp1[e] - dn[e]
     return q // ibe
+
+def braid(ipat, e, power=1):
+    #only do 1 or -1 power
+    curve_seq = trisequence_curve( ipat )
+    # top loop
+    n3 = edge_sqs[-e][0]
+    nn=n3
+    s_top = [nn]
+    for foo in range(4):
+        nn = edge_sqs[nn][0]
+        s_top.append(nn)
+    #bottom loop
+    n4 = edge_sqs[-e][1]
+    nn = n4
+    s_bot = [nn]
+    for foo in range(4):
+        nn = edge_sqs[nn][1]
+        s_bot.append(nn)
+    #
+    if power>0:
+        sbend = s_top+[-e]+s_bot
+    else:
+        sbend = s_bot+[-e]+s_top
+    #
+    # sbend = abs(power)*sbend
+    sbendback = [-foo for foo in sbend[::-1]]
+    braided = []
+    for cross in curve_seq:
+        if cross == e:
+            braided+=sbend
+        elif cross==-e:
+            braided+=sbendback
+        else:
+            braided.append(cross)
+    seq=cyclic_simplify(braided)
+    return normal_coord(seq)

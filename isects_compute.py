@@ -70,7 +70,7 @@ def mod_orbit( base, N ):
                     que.append(ct)
     return orbit
 
-orbsize = 50
+orbsize = 100
 
 
 
@@ -81,16 +81,16 @@ n3 = len(threes)
 n4 = len(fours)
 toat = n3*n4
 
-with open('threes.txt','a') as file:
-    for foo in range(n3):
-        file.write( str(foo)+'\n'+str(threes[foo])+'\n\n')
+# with open('threes.txt','a') as file:
+#     for foo in range(n3):
+#         file.write( str(foo)+'\n'+str(threes[foo])+'\n\n')
+#
+# with open('fours.txt','a') as file:
+#     for foo in range(n4):
+#         file.write( str(foo)+'\n'+str(fours[foo])+'\n\n')
 
-with open('fours.txt','a') as file:
-    for foo in range(n4):
-        file.write( str(foo)+'\n'+str(fours[foo])+'\n\n')
-
-
-with open('edges.txt','a') as file:
+try:
+    fileis = open('isects.txt','a')
     edges=[]
     for foo in range(n3):
         for bar in range(n4):
@@ -98,11 +98,14 @@ with open('edges.txt','a') as file:
             b=fours[bar]
             print(foo,' of ',n3, ' and ' , bar, 'of', n4)
             it=tt.geo_intersect( a, b)
-            # jt=tt.geo_intersect( b, a)
-            # if it!=jt: print(it,jt, 'CRISIS')
-            if it == 0:
-                edges.append((foo, bar))
-                file.write(str(foo) + "," + str(bar) + "\n")
+            fileis.write(str(it)+'\n')
+            stra = str(a)
+            fileis.write(stra[1:-1]+'\n')
+            strb = str(b)
+            fileis.write(strb[1:-1]+'\n')
+    fileis.close()
     print(len(edges))
+except KeyboardInterrupt:
+    fileis.close()
 
 

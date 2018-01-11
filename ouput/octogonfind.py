@@ -2,6 +2,7 @@ import networkx as nx
 import json
 
 
+
 threelist=[]
 threedict={}
 f=open('threes.txt','r')
@@ -61,12 +62,19 @@ def neighs_at_dist(graph,  vertex, distance):
 
 
 def lexigraphic_less( ipat0, ipat1 ):
-    for foo, bar in zip(ipat0,ipat1):
-        if foo>bar:
-            return False
-        elif foo<bar:
-            return True
-    return False
+    s0 = sum(ipat0)
+    s1 = sum(ipat1)
+    if s0<s1:
+        return True
+    elif s0>s1:
+        return False
+    else:
+        for foo, bar in zip(ipat0,ipat1):
+            if foo>bar:
+                return False
+            elif foo<bar:
+                return True
+        return False
 
 
 def cannoctagon ( oct ):
@@ -86,7 +94,7 @@ octogons=[]
 for x0 in usedthrees:
     d4t0 = neighs_at_dist(G, x0, 4)
     for x2 in d4t0:
-        d2x0 = neighs_at_dist(G, 't0', 2)
+        d2x0 = neighs_at_dist(G, x0, 2)
         d2x3 = neighs_at_dist(G, x2, 2)
         x13s = [foo for foo in d2x0 if foo in d2x3]
         for x1 in x13s:
