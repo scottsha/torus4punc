@@ -1,4 +1,8 @@
 import tandard as tt
+import listermerger
+import json
+import time
+timestr = time.strftime("%d%H%M%S")
 
 #This octogon has pt type 0,0,1,1
 x0 = (1,2,1,1,2,3,0,2,2,2,2,2)
@@ -61,7 +65,7 @@ def mod_orbit( base, N ):
                 orbit.append(ct)
                 if ct not in que:
                     que.append(ct)
-        for e in [12,3,6,9]:
+        for e in [12,3,6,9,2,5,8,11]:
             for pow in [-1,1]:
                 ct = tt.braid( cc, e, pow)
             if ct not in orbit:
@@ -76,9 +80,12 @@ orbsize = 100
 
 threes = mod_orbit( [base3,x0,x1,x2,x3], orbsize)
 fours = mod_orbit( [base4,y0,y1,y2,y3], orbsize)
+threes.sort( key = lambda x: tuple([sum(x)])+x)
+fours.sort( key = lambda x: tuple([sum(x)])+x)
 
 n3 = len(threes)
 n4 = len(fours)
+
 toat = n3*n4
 
 # with open('threes.txt','a') as file:
@@ -89,23 +96,30 @@ toat = n3*n4
 #     for foo in range(n4):
 #         file.write( str(foo)+'\n'+str(fours[foo])+'\n\n')
 
+with open('knownintersections.json') as knownfile:
+    knownlist = json.load(knownfile)
+
+known_intersections = set([tuple(foo[1::]) for foo in knownlist])
+
 try:
-    fileis = open('isects.txt','a')
+    fileis = open('extraisects'+timestr+'.txt','a')
     edges=[]
-    for foo in range(n3):
-        for bar in range(n4):
+    for bar in range(n4):
+        for foo in range(n3):
             a=threes[foo]
             b=fours[bar]
             print(foo,' of ',n3, ' and ' , bar, 'of', n4)
-            it=tt.geo_intersect( a, b)
-            fileis.write(str(it)+'\n')
-            stra = str(a)
-            fileis.write(stra[1:-1]+'\n')
-            strb = str(b)
-            fileis.write(strb[1:-1]+'\n')
+            if a+b not in known_intersections:
+                it=tt.geo_intersect( a, b)
+                fileis.write(str(it)+'\n')
+                stra = str(a)
+                fileis.write(stra[1:-1]+'\n')
+                strb = str(b)
+                fileis.write(strb[1:-1]+'\n')
     fileis.close()
     print(len(edges))
 except KeyboardInterrupt:
     fileis.close()
+    print('No worries Ill jot this down.')
 
 
