@@ -36,50 +36,12 @@ a1=(0,1,1,0,1,1,0,1,1,0,1,1)
 
 nonsep = [a1,a0,a3,a6,a9]
 
-def mod_orbit( base, N ):
-    orbit = base[::]
-    que = base[::]
-    for foo in range(N):
-        cc = que.pop(0)
-        cd=cc[::]
-        cinv = tt.involution(cc)
-        if cinv not in orbit:
-            orbit.append(cinv)
-            if cd not in que:
-                que.append(cinv)
-        for foo in range(3):
-            cd = tt.order4rotate(cd)
-            if cd not in orbit:
-                orbit.append( cd )
-                if cd not in que:
-                    que.append( cd )
-        for g in nonsep:
-            ct = tt.dehn_twist( g, cc )
-            if ct not in orbit:
-                orbit.append( ct )
-                if ct not in que:
-                    que.append( ct )
-        for g in nonsep:
-            ct = tt.dehn_twist(g, cc, -1)
-            if ct not in orbit:
-                orbit.append(ct)
-                if ct not in que:
-                    que.append(ct)
-        for e in [12,3,6,9,2,5,8,11]:
-            for pow in [-1,1]:
-                ct = tt.braid( cc, e, pow)
-            if ct not in orbit:
-                orbit.append(ct)
-                if ct not in que:
-                    que.append(ct)
-    return orbit
-
-orbsize = 100
+orbsize = 200
 
 
 
-threes = mod_orbit( [base3,x0,x1,x2,x3], orbsize)
-fours = mod_orbit( [base4,y0,y1,y2,y3], orbsize)
+threes = tt.mod_orbit( [base3,x0,x1,x2,x3], orbsize)
+fours = tt.mod_orbit( [base4,y0,y1,y2,y3], orbsize)
 threes.sort( key = lambda x: tuple([sum(x)])+x)
 fours.sort( key = lambda x: tuple([sum(x)])+x)
 
@@ -104,8 +66,8 @@ known_intersections = set([tuple(foo[1::]) for foo in knownlist])
 try:
     fileis = open('extraisects'+timestr+'.txt','a')
     edges=[]
-    for bar in range(n4):
-        for foo in range(n3):
+    for foo in range(1000): #range(n3):
+        for bar in range(1000): #range(n4):
             a=threes[foo]
             b=fours[bar]
             print(foo,' of ',n3, ' and ' , bar, 'of', n4)

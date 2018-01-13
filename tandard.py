@@ -771,3 +771,50 @@ def braid(ipat, e, power=1):
             braided.append(cross)
     seq=cyclic_simplify(braided)
     return normal_coord(seq)
+
+
+a0=(1,0,1,0,0,0,0,0,0,0,0,0)
+a9=order4rotate(a0)
+a6=order4rotate(a9)
+a3=order4rotate(a6)
+a1=(0,1,1,0,1,1,0,1,1,0,1,1)
+nonsep = [a1,a0,a3,a6,a9]
+
+
+def mod_orbit( base, iterations ):
+    orbit = base[::]
+    que = base[::]
+    for foo in range( iterations ):
+        cc = que.pop(0)
+        cd=cc[::]
+        cinv = involution(cc)
+        if cinv not in orbit:
+            orbit.append(cinv)
+            if cd not in que:
+                que.append(cinv)
+        for bar in range(3):
+            cd = order4rotate(cd)
+            if cd not in orbit:
+                orbit.append( cd )
+                if cd not in que:
+                    que.append( cd )
+        for g in nonsep:
+            ct = dehn_twist( g, cc )
+            if ct not in orbit:
+                orbit.append( ct )
+                if ct not in que:
+                    que.append( ct )
+        for g in nonsep:
+            ct = dehn_twist(g, cc, -1)
+            if ct not in orbit:
+                orbit.append(ct)
+                if ct not in que:
+                    que.append(ct)
+        for e in [12,3,6,9,2,5,8,11]:
+            for powow in [-1,1]:
+                ct = braid( cc, e, powow)
+            if ct not in orbit:
+                orbit.append(ct)
+                if ct not in que:
+                    que.append(ct)
+    return orbit
