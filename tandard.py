@@ -413,8 +413,9 @@ def tri_pt_seq_curve( ipat , start=False):
 # |_1\|_2\|_3\|_4\|
 #
 
-def homology_class( edgeseq ):
-    a = Counter( edgeseq )
+def homology_class( ipat ):
+    edgeseq = trisequence_curve(ipat)
+    a = Counter(edgeseq)
     # a[edgeseq[0]] -=1
     h0=a[1]-a[-1]
     h1=a[12]-a[-12]
@@ -818,3 +819,86 @@ def mod_orbit( base, iterations ):
                 if ct not in que:
                     que.append(ct)
     return orbit
+
+def euler_char_sides( ipat ):
+    #Compute the euler characteristic of the components of S_1,4 cut along the curve
+    slope0 = ipat[0]+ipat[3]+ipat[6]+ipat[9]
+    slope1 = ipat[1]
+    if (slope0%2 != 0) or (slope1%2 != 0):
+        return False
+    with0 = [0]
+    without0 = []
+    if ipat[0]%2 == 0:
+        with0.append(1)
+    else:
+        without0.append(1)
+    if (ipat[0]+ipat[3])%2 == 0:
+        with0.append(2)
+    else:
+        without0.append(2)
+    if ipat[9]%2 == 0:
+        with0.append(3)
+    else:
+        without0.append(3)
+    region = [0,0]
+    edges = [0,0]
+    si=sum(ipat)
+    verts = [si,si]
+    for pt in range(4):
+        color = int(pt not in with0)
+        verts[color] += 1
+        for sign in [-1,1]:
+            e=sign*(3*pt+1)
+            i0 = ipat[ abs(e)%12 ]
+            i1 = ipat[ abs(edge_sqs[e][0])%12 ]
+            i2 = ipat[ abs(edge_sqs[e][1])%12 ]
+            t0=(i1+i2-i0)//2
+            t1=(i0+i2-i1)//2
+            t2=(i0+i1-i2)//2
+            #####
+            color = int( pt not in with0 )
+            region[color] +=1
+            region[color] += t1//2
+            region[(color+1)%2] += (t1+1)//2
+            edges[color] += (i0 + i1 + i2) / 2
+            edges[color] += ( i0/2 + 1 + (i1+1)//2+1 + (i2+1)//2+1 )/2
+            edges[(color+1)%2] += (i0 + i1 + i2) / 2
+            edges[(color+1)%2] += ( i0/2 + i1-(i1+1)//2 + i2-(i2+1)//2 )/2
+            ####
+            color = (color + t1)%2
+            region[color] += t0//2 + t2//2
+            region[(color+1)%2] += (t0+1)//2 + (t2+1)//2
+    print(verts[0], edges[0], region[0])
+    eul0 = int( verts[0] - edges[0] + region[0] )
+    print(verts[1], edges[1], region[1])
+    eul1 = int( verts[1] - edges[1] + region[1] )
+    return (eul0, with0, eul1, without0)
+
+obv_isect_pairs=[]
+for midsq in range(1,13):
+    dwn = (-edge_sqs[-midsq][0], midsq, edge_sqs[midsq][0])
+    upp = (-edge_sqs[-midsq][1], midsq, edge_sqs[midsq][1])
+    obv_isect_pairs.append((dwn,upp))
+
+def arc_find( sub, a):
+    x=sub[0]
+    y=sub[1]
+    z=sub[2]
+    ll=len(a)
+    for foo, v in enumerate(a):
+        if v==y:
+            if a[foo-1]==x and a[(foo+1)%ll]==z:
+                return True
+        elif v==-y:
+            if a[foo-1]==-z and a[(foo+1)%ll]==-x:
+                return True
+    return False
+
+
+def obvious_intersection( ipat, jpat ):
+    c0 = trisequence_curve(ipat)
+    c1 = trisequence_curve(jpat)
+    for pair in obv_isect_pairs:
+        if ( arc_find(pair[0],c0) and arc_find(pair[1],c1) ) or arc_find(pair[1],c0) and arc_find(pair[0],c1):
+            return True
+    return False

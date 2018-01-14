@@ -36,14 +36,15 @@ a1=(0,1,1,0,1,1,0,1,1,0,1,1)
 
 nonsep = [a1,a0,a3,a6,a9]
 
-orbsize = 200
+orbsize = 2000
 
 
 
-threes = tt.mod_orbit( [base3,x0,x1,x2,x3], orbsize)
-fours = tt.mod_orbit( [base4,y0,y1,y2,y3], orbsize)
-threes.sort( key = lambda x: tuple([sum(x)])+x)
-fours.sort( key = lambda x: tuple([sum(x)])+x)
+print('Thinking of curves')
+threes = tt.mod_orbit( [base3], orbsize)
+fours = tt.mod_orbit( [base4], orbsize)
+threes.sort(key = lambda x: tuple([sum(x)])+x)
+fours.sort(key = lambda x: tuple([sum(x)])+x)
 
 n3 = len(threes)
 n4 = len(fours)
@@ -70,14 +71,15 @@ try:
         for bar in range(1000): #range(n4):
             a=threes[foo]
             b=fours[bar]
-            print(foo,' of ',n3, ' and ' , bar, 'of', n4)
             if a+b not in known_intersections:
-                it=tt.geo_intersect( a, b)
-                fileis.write(str(it)+'\n')
-                stra = str(a)
-                fileis.write(stra[1:-1]+'\n')
-                strb = str(b)
-                fileis.write(strb[1:-1]+'\n')
+                if not tt.obvious_intersection(a, b):
+                    print(foo, ' of ', n3, ' and ', bar, 'of', n4)
+                    it=tt.geo_intersect( a, b)
+                    fileis.write(str(it)+'\n')
+                    stra = str(a)
+                    fileis.write(stra[1:-1]+'\n')
+                    strb = str(b)
+                    fileis.write(strb[1:-1]+'\n')
     fileis.close()
     print(len(edges))
 except KeyboardInterrupt:

@@ -8,12 +8,12 @@ with open('octagons.json', 'r') as infile:
 with open('bases.json','r') as infile:
     octabase = json.load(infile)
 
-base3 = octabase[0]
-
-if base3 == (1, 0, 1, 0, 2, 2, 0, 2, 2, 1, 2, 1):
-    print('The a nice base')
-else:
-    print('BAD BASE! I DONT KNOW YOU! STRANGER DANGER!')
+# base3 = octabase[0]
+#
+# if base3 == (1, 0, 1, 0, 2, 2, 0, 2, 2, 1, 2, 1):
+#     print('The a nice base')
+# else:
+#     print('BAD BASE! I DONT KNOW YOU! STRANGER DANGER!')
 
 print(len(octagons), ' octagons coming in')
 
