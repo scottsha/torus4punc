@@ -29,21 +29,38 @@ def pts_outside_3curve( ipat ):
                 return foo
 
 knownins = []
+with open('knowninocts.json', 'r') as infile:
+    knowins = json.load(infile)
+
 storedisects = dict()
+for know_it in knowins:
+    cc = tuple(know_it[0:12])
+    cd = tuple(know_it[12:24])
+    storedisects[(cc,cd)] = know_it[24]
 
 
 def isect_pattern( octagon ):
     a=[]
-    for foo, bar in combinations([0,2,4,6],2):
-        pair = tuple((octagon[foo], octagon[bar]))
+    for foo, bar in [(0,2),(2,4),(4,6),(6,0),(0,4),(2,6)]:
+        cc=octagon[foo]
+        cd=octagon[bar]
+        if tt.curve_sort_key(cc) < tt.curve_sort_key(cd):
+            pair = (cc, cd)
+        else:
+            pair = (cd, cc)
         if pair in storedisects:
             ii=storedisects[pair]
         else:
             ii=tt.geo_intersect(*pair)
             storedisects[pair]=ii
         a.append( ii )
-    for foo, bar in combinations([1,3,5,7],2):
-        pair = (octagon[foo], octagon[bar])
+    for foo, bar in [(1,3),(3,5),(5,7),(7,1),(1,5),(3,7)]:
+        cc=octagon[foo]
+        cd=octagon[bar]
+        if tt.curve_sort_key(cc) < tt.curve_sort_key(cd):
+            pair = (cc, cd)
+        else:
+            pair = (cd, cc)
         if pair in storedisects:
             ii=storedisects[pair]
         else:

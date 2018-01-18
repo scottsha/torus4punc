@@ -36,13 +36,13 @@ a1=(0,1,1,0,1,1,0,1,1,0,1,1)
 
 nonsep = [a1,a0,a3,a6,a9]
 
-orbsize = 2000
+orbsize = 2500
 
 
 
 print('Thinking of curves')
-# threes = tt.subgroup_orbit( [base3], orbsize, dehn_gens=[a1,a9], braid_gens=[12,3,6] )
-threes = tt.mod_orbit( [base3], orbsize)
+threes = tt.subgroup_orbit( [base3], orbsize, dehn_gens=[a1,a6], braid_gens=[12,3,9] )
+# threes = tt.mod_orbit( [base3], orbsize)
 # fours = tt.subgroup_orbit( [base4], orbsize, dehn_gens=[a1,a6,a9], braid_gens=[12,3])
 fours = tt.mod_orbit([base4], orbsize)
 print('Sort these loopy boys')

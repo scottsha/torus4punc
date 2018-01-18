@@ -1,0 +1,3 @@
+Evaluate possibilities of octagon intersection.
+
+Storage for octagons by intersection patterns.

@@ -641,6 +641,8 @@ def involution( ipat ):
     i10=ipat[4]
     i11=ipat[2]
     return (i0,i1,i2,i3,i4,i5,i6,i7,i8,i9,i10,i11)
+
+
 hug_edge={
     #start from a0 hug edge on the signed side
     -12:(12, -1),
