@@ -868,9 +868,7 @@ def euler_char_sides( ipat ):
             color = (color + t1)%2
             region[color] += t0//2 + t2//2
             region[(color+1)%2] += (t0+1)//2 + (t2+1)//2
-    print(verts[0], edges[0], region[0])
     eul0 = int( verts[0] - edges[0] + region[0] )
-    print(verts[1], edges[1], region[1])
     eul1 = int( verts[1] - edges[1] + region[1] )
     return (eul0, with0, eul1, without0)
 
@@ -902,3 +900,57 @@ def obvious_intersection( ipat, jpat ):
         if ( arc_find(pair[0],c0) and arc_find(pair[1],c1) ) or arc_find(pair[1],c0) and arc_find(pair[0],c1):
             return True
     return False
+
+
+# a0=(1,0,1,0,0,0,0,0,0,0,0,0)
+# a9=order4rotate(a0)
+# a6=order4rotate(a9)
+# a3=order4rotate(a6)
+# a1=(0,1,1,0,1,1,0,1,1,0,1,1)
+# nonsep = [a1,a0,a3,a6,a9]
+
+def subgroup_orbit( base, iterations, dehn_gens=nonsep, braid_gens = [12,3,6,9,2,5,8,11] ):
+    #applies mod generators that fix the four
+    #curve (0,2,2,0,2,2,0,2,2,2,2,2)
+    orbit = base[::]
+    que = base[::]
+    for foo in range( iterations ):
+        cc = que.pop(0)
+        cd=cc[::]
+        # cinv = involution(cc)
+        # if cinv not in orbit:
+        #     orbit.append(cinv)
+        #     if cd not in que:
+        #         que.append(cinv)
+        # for bar in range(3):
+        #     cd = order4rotate(cd)
+        #     if cd not in orbit:
+        #         orbit.append( cd )
+        #         if cd not in que:
+        #             que.append( cd )
+        for g in dehn_gens:
+            ct = dehn_twist( g, cc )
+            if ct not in orbit:
+                orbit.append( ct )
+                if ct not in que:
+                    que.append( ct )
+        for g in dehn_gens:
+            ct = dehn_twist(g, cc, -1)
+            if ct not in orbit:
+                orbit.append(ct)
+                if ct not in que:
+                    que.append(ct)
+        for e in braid_gens:
+            for powow in [-1,1]:
+                ct = braid( cc, e, powow)
+            if ct not in orbit:
+                orbit.append(ct)
+                if ct not in que:
+                    que.append(ct)
+    return orbit
+
+
+def curve_sort_key(ipat):
+    a = ipat[0]+ipat[1]+ipat[3]+ipat[6]+ipat[9]
+    kk = (a,ipat[2],ipat[4],ipat[4],ipat[5],ipat[7],ipat[8],ipat[10],ipat[11],ipat[1],ipat[0],ipat[3],ipat[6],ipat[9])
+    return kk

@@ -41,10 +41,13 @@ orbsize = 2000
 
 
 print('Thinking of curves')
+# threes = tt.subgroup_orbit( [base3], orbsize, dehn_gens=[a1,a9], braid_gens=[12,3,6] )
 threes = tt.mod_orbit( [base3], orbsize)
-fours = tt.mod_orbit( [base4], orbsize)
-threes.sort(key = lambda x: tuple([sum(x)])+x)
-fours.sort(key = lambda x: tuple([sum(x)])+x)
+# fours = tt.subgroup_orbit( [base4], orbsize, dehn_gens=[a1,a6,a9], braid_gens=[12,3])
+fours = tt.mod_orbit([base4], orbsize)
+print('Sort these loopy boys')
+threes.sort(key = lambda x: tt.curve_sort_key(x))
+fours.sort(key = lambda x: tt.curve_sort_key(x))
 
 n3 = len(threes)
 n4 = len(fours)
@@ -66,9 +69,8 @@ known_intersections = set([tuple(foo[1::]) for foo in knownlist])
 
 try:
     fileis = open('extraisects'+timestr+'.txt','a')
-    edges=[]
-    for foo in range(1000): #range(n3):
-        for bar in range(1000): #range(n4):
+    for bar in range(n4):
+        for foo in range(n3):
             a=threes[foo]
             b=fours[bar]
             if a+b not in known_intersections:
@@ -81,7 +83,6 @@ try:
                     strb = str(b)
                     fileis.write(strb[1:-1]+'\n')
     fileis.close()
-    print(len(edges))
 except KeyboardInterrupt:
     fileis.close()
     print('No worries Ill jot this down.')

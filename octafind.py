@@ -1,6 +1,7 @@
 import networkx as nx
 import json
 import os
+from itertools import combinations
 
 
 with open('knownintersections.json','r') as knownfile:
@@ -39,8 +40,8 @@ for foo in knownlist:
 print(len(threes), 'Three')
 print(len(fours),'Fourin')
 
-threes = sorted( list(threes) )
-fours = sorted( list(fours) )
+threes = sorted( list(threes), key = lambda x: tuple([sum(x)])+x )
+fours = sorted( list(fours), key = lambda x: tuple([sum(x)])+x )
 G = nx.Graph()
 for foo in disjoints:
     ti = threes.index(foo[0])
@@ -57,72 +58,23 @@ def neighs_at_dist(graph,  vertex, distance):
     return neighs
 
 
-def lexigraphic_less( ipat0, ipat1 ):
-    s0 = sum(ipat0)
-    s1 = sum(ipat1)
-    if s0<s1:
-        return True
-    elif s0>s1:
-        return False
-    else:
-        for foo, bar in zip(ipat0,ipat1):
-            if foo>bar:
-                return False
-            elif foo<bar:
-                return True
-        return False
-
+def octagon_wrapper( oct ):
+    a = ()
+    for pat in oct:
+        a+=tt.curve_sort_key(ipat)
+    b = (sum(a),)+a
+    return tuple(b)
 
 def cannoctagon ( oct ):
-    oo = oct[::]
-    leastat = 0
-    for foo in range(2,8,2):
-        if lexigraphic_less( oct[foo], oct[leastat] ):
-            leastat = foo
-    if lexigraphic_less( oct[(leastat +2)%8], oct[(leastat +6)%8] ):
-        return [ oct[(leastat+foo)%8] for foo in range(8) ]
-    else:
-        return [oct[(leastat + foo) % 8] for foo in range(8,0,-1)]
-
-
-
-# octogons=[]
-#
-# for x0 in usedthrees:
-#     d4t0 = neighs_at_dist(G, x0, 4)
-#     for x2 in d4t0:
-#         d2x0 = neighs_at_dist(G, x0, 2)
-#         d2x3 = neighs_at_dist(G, x2, 2)
-#         x13s = [foo for foo in d2x0 if foo in d2x3]
-#         for x1 in x13s:
-#             p = nx.shortest_path(G, source=x0, target=x1)
-#             y0 = p[1]
-#             p = nx.shortest_path(G, source=x1, target=x2)
-#             y1 = p[1]
-#             H=G.copy()
-#             H.remove_node(y0)
-#             H.remove_node(x1)
-#             H.remove_node(y1)
-#             for x3 in x13s:
-#                 if x3!=x1:
-#                     try:
-#                         p=nx.shortest_path(H, source=x0, target=x3)
-#                         y3 = p[1]
-#                         p=nx.shortest_path(H, source=x3, target=x2)
-#                         y2 = p[1]
-#                     except:
-#                         continue
-#                     oct = [x0,y0,x1,y1,x2,y2,x3,y3]
-#                     octo = []
-#                     for o in oct:
-#                         try:
-#                             ipat = threedict[o]
-#                         except KeyError:
-#                             ipat = fourdict[o]
-#                         octo.append(ipat)
-#                     octo = cannoctagon(octo)
-#                     if (octo not in octogons):
-#                         octogons.append(octo)
+    sameocts = []
+    for foo in range(4):
+        sameocts.append( oct[2*foo:]+oct[:2*foo] )
+    reved = []
+    for foo in sameocts:
+        reved.append( foo[::-1] )
+    sameocts+=reved
+    low = min(sameocts, key = lambda x: octagon_wrapper(x) )
+    return tuple(low)
 
 max3deg = 0
 max3 = False
@@ -139,11 +91,12 @@ bases = [max3]
 
 for x0 in bases:
     d4t0 = neighs_at_dist(G, x0, 4)
+    print('considering', len(d4t0), 'possible x2')
     for x2 in d4t0:
         d2x0 = neighs_at_dist(G, x0, 2)
         d2x3 = neighs_at_dist(G, x2, 2)
         x13s = [foo for foo in d2x0 if foo in d2x3]
-        for x1 in x13s:
+        for x1,x3 in combinations(x13s,2):
             p = nx.shortest_path(G, source=x0, target=x1)
             y0 = p[1]
             p = nx.shortest_path(G, source=x1, target=x2)
@@ -152,29 +105,29 @@ for x0 in bases:
             H.remove_node(y0)
             H.remove_node(x1)
             H.remove_node(y1)
-            for x3 in x13s:
-                if x3!=x1:
-                    try:
-                        p=nx.shortest_path(H, source=x0, target=x3)
-                        y3 = p[1]
-                        p=nx.shortest_path(H, source=x3, target=x2)
-                        y2 = p[1]
-                    except:
-                        continue
-                    oct = [x0,y0,x1,y1,x2,y2,x3,y3]
-                    octo = []
-                    for foo in range(8):
-                        o = oct[foo]
-                        if foo%2==0:
-                            ipat = threes[o[1]]
-                        else:
-                            ipat = fours[o[1]]
-                        octo.append(ipat)
-                    octo = cannoctagon(octo)
-                    if (octo not in octogons):
-                        octogons.append(octo)
+            try:
+                p=nx.shortest_path(H, source=x0, target=x3)
+                y3 = p[1]
+                p=nx.shortest_path(H, source=x3, target=x2)
+                y2 = p[1]
+            except:
+                continue
+            oct = (x0,y0,x1,y1,x2,y2,x3,y3)
+            octo = []
+            for foo in range(8):
+                o = oct[foo]
+                if foo%2==0:
+                    ipat = threes[o[1]]
+                else:
+                    ipat = fours[o[1]]
+                octo.append(ipat)
+            octo = cannoctagon(tuple(octo))
+            if (octo not in octogons):
+                octogons.append(octo)
 
 print(len(octogons), 'octagons found based at', x0, threes[x0[1]])
+
+octogons.sort(key = lambda x: octagon_wrapper(x))
 
 with open('octagons.json', 'w') as outfile:
     json.dump(octogons, outfile)

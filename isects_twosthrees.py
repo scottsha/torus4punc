@@ -22,11 +22,19 @@ for oct in octagons:
 num_threes = len(octathrees)
 print(num_threes, 'three-curves in these octagons')
 
-base2 = (0,0,0,1,0,1,0,2,2,1,2,1)
-twos_orb_size = 500
+a0=(1,0,1,0,0,0,0,0,0,0,0,0)
+a9=tt.order4rotate(a0)
+a6=tt.order4rotate(a9)
+a3=tt.order4rotate(a6)
+a1=(0,1,1,0,1,1,0,1,1,0,1,1)
+nonsep = [a1,a0,a3,a6,a9]
 
-twos = tt.mod_orbit([base2], twos_orb_size)
-twos.sort(key = lambda x: tuple([sum(x)])+x)
+base2 = (0,0,0,1,0,1,0,2,2,1,2,1)
+twos_orb_size = 3000
+
+# twos = tt.mod_orbit([base2], twos_orb_size)
+twos = tt.subgroup_orbit([base2], twos_orb_size, dehn_gens=[a1,a6,a9], braid_gens=[12,3,6] )
+twos.sort(key = lambda x: tt.curve_sort_key(x))
 num_twos = len(twos)
 print( num_twos, 'two-curves check against')
 
@@ -50,7 +58,6 @@ try:
                     strb = str(athree)
                     fileis.write(strb[1:-1]+'\n')
     fileis.close()
-    print(len(edges))
 except KeyboardInterrupt:
     fileis.close()
     print('No worries Ill jot this down.')

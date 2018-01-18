@@ -1,6 +1,6 @@
 import json
 import tandard as tt
-from itertools import permutations
+from itertools import combinations
 
 with open('octagons.json', 'r') as infile:
     octagons = json.load(infile)
@@ -8,19 +8,9 @@ with open('octagons.json', 'r') as infile:
 with open('bases.json','r') as infile:
     octabase = json.load(infile)
 
-# base3 = octabase[0]
-#
-# if base3 == (1, 0, 1, 0, 2, 2, 0, 2, 2, 1, 2, 1):
-#     print('The a nice base')
-# else:
-#     print('BAD BASE! I DONT KNOW YOU! STRANGER DANGER!')
-
+octagons = [ tuple([ tuple(ipat) for ipat in oct]) for oct in octagons]
 print(len(octagons), ' octagons coming in')
 
-# twosinbase3 = [ (0,0,0,1,0,1,0,2,2,1,2,1),(1,0,1,0,2,2,1,2,1,0,0,0) ]
-# twos_check_param = 100
-# que = twosinbase3[::]
-# for foo in range(twos_check_param):
 
 
 def pts_outside_3curve( ipat ):
@@ -38,56 +28,56 @@ def pts_outside_3curve( ipat ):
             if foo not in with0:
                 return foo
 
-# oo = octagons[0]
-# for octnum, oo in enumerate(octagons):
-#     pttype = [ pts_outside_3curve(foo) for ct,foo in enumerate(oo) if ct%2==0]
-#     print(pttype)
-    # if pttype==[2,0,3,0]:
-    #     print(octnum)
-    #     for count,o in enumerate(oo):
-    #         print(o)
-    #     print('')
-
-# odd_oct = octagons[37]
-# for foo in range(0,8,2):
-#     print( odd_oct[foo] )
-#     tt.curveplot( tt.curve(odd_oct[foo]) )
-# for foo in range(8):
-#     print( tt.geo_intersect( odd_oct[foo-1], odd_oct[foo] ) )
+knownins = []
+storedisects = dict()
 
 
-# #This octogon has pt type 0,0,1,1
-# x0 = (1,2,1,1,2,3,0,2,2,2,2,2)
-# y0 = (0,2,2,0,2,2,0,2,2,2,2,2)
-# x1 = (1,2,3,1,2,1,0,2,2,2,2,2)
-# y1 = (2,4,6,2,4,2,0,2,2,2,2,2)
-# x2 = (1,2,3,2,2,2,0,2,2,1,2,1)
-# y2 = (0,2,2,2,2,2,0,2,2,0,2,2)
-# x3 = (1,2,1,2,2,2,0,2,2,1,2,3)
-# y3 = (2,4,2,2,4,4,0,2,2,2,2,4)
-# thirdheat = [x0,y0,x1,y1,x2,y2,x3,y3]
-#
-# for foo, a in enumerate(thirdheat):
-#     # c0=tt.middle_embedding( a )
-#     # c1=tt.curve( thirdheat[foo-1] )
-#     # # tt.curvesplot([c0,c1])
-#     # print( tt.geo_intersect( thirdheat[foo-1], a) )
-
-#observed_ptype = [foo for foo in permutations(range(4),4)]
-#observed_ptype+= [(3,2,3,2), (3,0,3,0), (3,1,3,1), (2,0,2,0), (2,1,2,1), (2,3,2,3), (0,1,0,1), (0,3,0,3), (0,2,0,2),(1,0,1,0),(1,2,1,2),(1,3,1,3)]
-
-observe_ptype = []
-observe_itype = []
-
-for oct in octagons:
+def isect_pattern( octagon ):
     a=[]
-    for foo in range(-2,6,2):
-        a.append( tt.geo_intersect(oct[foo], oct[foo+2]) )
-    a=tuple(a)
+    for foo, bar in combinations([0,2,4,6],2):
+        pair = tuple((octagon[foo], octagon[bar]))
+        if pair in storedisects:
+            ii=storedisects[pair]
+        else:
+            ii=tt.geo_intersect(*pair)
+            storedisects[pair]=ii
+        a.append( ii )
+    for foo, bar in combinations([1,3,5,7],2):
+        pair = (octagon[foo], octagon[bar])
+        if pair in storedisects:
+            ii=storedisects[pair]
+        else:
+            ii=tt.geo_intersect(*pair)
+            storedisects[pair]=ii
+        a.append( ii )
+    return tuple(a)
+
+
+
+observe_ptype = set()
+observe_itype = set()
+numo = len(octagons)
+for foo,oct in enumerate(octagons):
+    if (foo%10==0): print((100*foo)//numo, '% complete')
     pttype = tuple([pts_outside_3curve(foo) for ct, foo in enumerate(oct) if ct % 2 == 0])
-    if a not in observe_itype:
-        observe_itype.append(a)
-        print('intersection type ', a, ' observed')
-    if pttype not in observe_ptype:
-        observe_ptype.append(pttype)
-        print('point type ', pttype, ' observed')
+    ittype = isect_pattern(oct)
+    observe_ptype.add(pttype)
+    if ittype not in observe_itype:
+        observe_itype.add(ittype)
+        print('oct number', foo)
+        print(ittype, pttype)
+        print(oct)
+        print('/n')
+
+for sawi in observe_itype:
+    print( sawi )
+
+for sawp in observe_ptype:
+    print( sawp )
+
+
+for foo in storedisects.keys():
+    knownins.append( foo[0]+foo[1]+tuple([storedisects[foo]]) )
+
+with open('knowninocts.json', 'w') as outfile:
+    json.dump(knownins, outfile)

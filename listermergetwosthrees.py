@@ -18,7 +18,7 @@ for filename in os.listdir('mergetwosthrees'):
                 known_intersections.add( iknow )
                 lino = file.readline()
 known_i = list(known_intersections)
-known_i.sort( key = lambda x: tuple([sum(x)])+x)
+known_i.sort( key = lambda x: tt.curve_sort_key(x))
 
 print('listing knowns')
 with open('knowntwosthrees.json', 'w') as outfile:
