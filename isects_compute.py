@@ -36,18 +36,38 @@ a1=(0,1,1,0,1,1,0,1,1,0,1,1)
 
 nonsep = [a1,a0,a3,a6,a9]
 
-orbsize = 2500
 
+anice3 = (1,0,1,0,2,2,0,2,2,1,2,1)
+wild = (6,4,8,0,4,4,1,4,5,3,4,1)
+
+wild4 = (6,4,8,0,4,4,0,4,4,2,4,2)
+buck4 = (6,4,8,0,4,4,2,4,6,4,4,0)
+style4 = (6,4,8,0,6,6,2,6,8,4,6,2)
+cryal4 = (6,6,8,0,4,4,2,4,6,4,6,2)
+mile4 = (0,2,2,0,2,2,2,2,4,2,2,2)
+bile4 = (0,2,2,0,2,2,2,2,2,2,2,0)
+qile4 = (0,2,2,0,2,2,2,2,2,2,2,4)
+
+
+buck = (3,2,5,0,4,4,2,4,6,3,4,1)
+style = (5,2,7,0,4,4,2,4,6,3,4,1)
+cryal = (3,4,3,0,2,2,2,2,4,3,4,1)
+mile = (1,0,1,0,2,2,2,2,4,1,2,1)
+bile = (1,2,3,0,2,2,2,2,2,3,2,1)
+qile = (1,2,1,0,2,2,2,2,2,1,2,1)
 
 
 print('Thinking of curves')
-threes = tt.subgroup_orbit( [base3], orbsize, dehn_gens=[a1,a6], braid_gens=[12,3,9] )
+# threes = tt.mod_orbit( [wild,anice3,buck,style,cryal,mile,bile,qile], orbsize)
+# dehn_gens=[], braid_gens=[12,3,6,9,2,5,8,11] )
 # threes = tt.mod_orbit( [base3], orbsize)
-# fours = tt.subgroup_orbit( [base4], orbsize, dehn_gens=[a1,a6,a9], braid_gens=[12,3])
+orbsize = 100
+threes = tt.subgroup_orbit([base3], 30*orbsize, dehn_gens=[], braid_gens=[12,3,6,9])
+#  fours = tt.subgroup_orbit( [base4], orbsize, dehn_gens=[a1,a6,a9], braid_gens=[12,3])
 fours = tt.mod_orbit([base4], orbsize)
 print('Sort these loopy boys')
-threes.sort(key = lambda x: tt.curve_sort_key(x))
-fours.sort(key = lambda x: tt.curve_sort_key(x))
+# threes.sort(key = lambda x: tt.curve_sort_key(x))
+# fours.sort(key = lambda x: tt.curve_sort_key(x))
 
 n3 = len(threes)
 n4 = len(fours)

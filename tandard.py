@@ -1,5 +1,6 @@
 import pylab as pl
 from matplotlib import collections as mc
+import matplotlib.pyplot as plt
 import random
 from collections import Counter
 # The chosen triangulation of S_{1,4}
@@ -954,5 +955,44 @@ def subgroup_orbit( base, iterations, dehn_gens=nonsep, braid_gens = [12,3,6,9,2
 
 def curve_sort_key(ipat):
     a = ipat[0]+ipat[1]+ipat[3]+ipat[6]+ipat[9]
-    kk = (a,ipat[2],ipat[4],ipat[4],ipat[5],ipat[7],ipat[8],ipat[10],ipat[11],ipat[1],ipat[0],ipat[3],ipat[6],ipat[9])
+    kk = (a,ipat[1],ipat[0],ipat[3],ipat[6],ipat[9],ipat[2],ipat[4],ipat[5],ipat[7],ipat[8],ipat[10],ipat[11])
     return kk
+
+def octoplot( octogon ):
+    segments =[]
+    for foo in range(4):
+        segments.append([(foo,0), (foo,1)])
+        segments.append([(foo, 0), (foo+1, 0)])
+        segments.append([(foo, 1), (foo+1, 1)])
+        segments.append([(foo,1), (foo+1,0)])
+    segments.append([(4,0), (4,1)])
+    f, axarr = plt.subplots(3,3, sharex='col', sharey='row')
+    pltspots = [[0,1],[0,2],[1,2],[2,2],[2,1],[2,0],[1,0],[0,0]]
+    for foo in range(8):
+        cc = curve( octogon[foo] )
+        ccc = mc.LineCollection(cc, colors='r', linewidths=2)
+        lc = mc.LineCollection(segments, linewidths=1)
+        spot = pltspots[foo]
+        axarr[spot[0], spot[1]].add_collection(lc)
+        axarr[spot[0],spot[1]].add_collection(ccc)
+        axarr[spot[0],spot[1]].autoscale()
+        axarr[spot[0], spot[1]].axis('off')
+    axarr[1,1].axis('off')
+    f.subplots_adjust(hspace=0,wspace=0)
+    # plt.show()
+
+
+def pts_outside_3curve( ipat ):
+    with0 = []
+    if ipat[0]%2 == 0:
+        with0.append(1)
+    if (ipat[0]+ipat[3])%2 == 0:
+        with0.append(2)
+    if ipat[9]%2 == 0:
+        with0.append(3)
+    if with0 == []:
+        return 0
+    else:
+        for foo in range(1,4):
+            if foo not in with0:
+                return foo

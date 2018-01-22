@@ -1,5 +1,5 @@
 import json
-# import tandard as tt
+import tandard as tt
 import listermergetwosthrees
 import networkx as nx
 import time
@@ -43,6 +43,8 @@ print(H23.number_of_edges(), 'edges in 23graph')
 print(H23.number_of_nodes(), 'nodes in 23graph')
 
 
+badds = []
+
 abad = False
 for oct in octagons:
     for foo in range(-2,6,2):
@@ -56,9 +58,39 @@ for oct in octagons:
             print(ii, xi, 'bad', xip1)
             print(oct)
             abad = True
+            badds.append(xi)
+            badds.append(xip1)
 
 
 if abad:
     print('I saw bads. ')
+    base2 = (0, 0, 0, 1, 0, 1, 0, 2, 2, 1, 2, 1)
+    twos_orb_size = 3000
+    twos = tt.mod_orbit([base2], twos_orb_size)
+    twos.sort(key=lambda x: tt.curve_sort_key(x))
+    num_twos = len(twos)
+    num_threes = len(badds)
+    print(num_twos, 'two-curves check against')
+
+    known_twosthrees = set([tuple(foo[1::]) for foo in knownlist])
+
+    try:
+        fileis = open('twothreebads' + timestr + '.txt', 'a')
+        for foo, atwo in enumerate(twos):
+            for bar, athree in enumerate(badds):
+                if atwo + athree not in known_twosthrees:
+                    if not tt.obvious_intersection(atwo, athree):
+                        print(foo, ' of ', num_twos, ' and ', bar, 'of', num_threes)
+                        it = tt.geo_intersect(atwo, athree)
+                        fileis.write(str(it) + '\n')
+                        stra = str(atwo)
+                        fileis.write(stra[1:-1] + '\n')
+                        strb = str(athree)
+                        fileis.write(strb[1:-1] + '\n')
+        fileis.close()
+    except KeyboardInterrupt:
+        fileis.close()
+        print('No worries Ill jot this down.')
+
 else:
     print('I saw no bads. Everyone has a unique 2-curve.')

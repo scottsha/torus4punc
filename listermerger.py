@@ -19,7 +19,7 @@ for filename in os.listdir('mergeums'):
                 known_intersections.add( iknow )
                 lino = file.readline()
 known_i = list(known_intersections)
-known_i.sort( key = lambda x: curve_sort_key(x))
+known_i.sort(key=lambda x: (x[0],) + curve_sort_key(x[1:13]) + curve_sort_key(x[13::]))
 
 print('listing knowns')
 with open('knownintersections.json', 'w') as outfile:

@@ -32,8 +32,8 @@ nonsep = [a1,a0,a3,a6,a9]
 base2 = (0,0,0,1,0,1,0,2,2,1,2,1)
 twos_orb_size = 3000
 
-# twos = tt.mod_orbit([base2], twos_orb_size)
-twos = tt.subgroup_orbit([base2], twos_orb_size, dehn_gens=[a1,a6,a9], braid_gens=[12,3,6] )
+twos = tt.mod_orbit([base2], twos_orb_size)
+# twos = tt.subgroup_orbit([base2], twos_orb_size, dehn_gens=[a1,a6,a9], braid_gens=[12,3,6] )
 twos.sort(key = lambda x: tt.curve_sort_key(x))
 num_twos = len(twos)
 print( num_twos, 'two-curves check against')

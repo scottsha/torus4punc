@@ -1,6 +1,7 @@
 import json
 import tandard as tt
 from itertools import combinations
+import matplotlib.pyplot as plt
 
 with open('octagons.json', 'r') as infile:
     octagons = json.load(infile)
@@ -81,10 +82,22 @@ for foo,oct in enumerate(octagons):
     observe_ptype.add(pttype)
     if ittype not in observe_itype:
         observe_itype.add(ittype)
-        print('oct number', foo)
+        # print('oct number', foo)
+        # print(ittype, pttype)
+        # print(oct)
+        # print('/n')
+    if len(set(pttype))==2 and (ittype[4]>10 or ittype[5]>10):
         print(ittype, pttype)
         print(oct)
-        print('/n')
+        print('')
+    reped_pt = False
+    for foo in range(4):
+        if pttype[foo-1]==pttype[foo]:
+            reped_pt=True
+    if reped_pt:
+        print('A repeater')
+        print(ittype)
+        print(oct)
 
 for sawi in observe_itype:
     print( sawi )

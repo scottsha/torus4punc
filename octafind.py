@@ -2,6 +2,7 @@ import networkx as nx
 import json
 import os
 from itertools import combinations
+from tandard import curve_sort_key
 
 
 with open('knownintersections.json','r') as knownfile:
@@ -60,8 +61,8 @@ def neighs_at_dist(graph,  vertex, distance):
 
 def octagon_wrapper( oct ):
     a = ()
-    for pat in oct:
-        a+=tt.curve_sort_key(ipat)
+    for ipat in oct:
+        a+=curve_sort_key(ipat)
     b = (sum(a),)+a
     return tuple(b)
 
@@ -71,7 +72,8 @@ def cannoctagon ( oct ):
         sameocts.append( oct[2*foo:]+oct[:2*foo] )
     reved = []
     for foo in sameocts:
-        reved.append( foo[::-1] )
+        backs = foo[::-1]
+        reved.append( backs[1:]+backs[:1] )
     sameocts+=reved
     low = min(sameocts, key = lambda x: octagon_wrapper(x) )
     return tuple(low)
@@ -129,6 +131,7 @@ print(len(octogons), 'octagons found based at', x0, threes[x0[1]])
 
 octogons.sort(key = lambda x: octagon_wrapper(x))
 
+octagons = [ tuple([ tuple(ipat) for ipat in oct]) for oct in octogons]
 with open('octagons.json', 'w') as outfile:
     json.dump(octogons, outfile)
 
