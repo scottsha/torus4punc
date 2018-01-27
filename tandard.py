@@ -968,7 +968,7 @@ def octoplot( octogon ):
     segments.append([(4,0), (4,1)])
     f, axarr = plt.subplots(3,3, sharex='col', sharey='row')
     pltspots = [[0,1],[0,2],[1,2],[2,2],[2,1],[2,0],[1,0],[0,0]]
-    for foo in range(8):
+    for foo in range( min(8,len(octogon)) ):
         cc = curve( octogon[foo] )
         ccc = mc.LineCollection(cc, colors='r', linewidths=2)
         lc = mc.LineCollection(segments, linewidths=1)
@@ -996,3 +996,8 @@ def pts_outside_3curve( ipat ):
         for foo in range(1,4):
             if foo not in with0:
                 return foo
+
+
+def is_disjoint_curves( cpat, bpat):
+    t_c_b = dehn_twist( cpat,  bpat )
+    return (t_c_b == bpat)

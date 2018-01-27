@@ -62,7 +62,7 @@ print('Thinking of curves')
 # dehn_gens=[], braid_gens=[12,3,6,9,2,5,8,11] )
 # threes = tt.mod_orbit( [base3], orbsize)
 orbsize = 100
-threes = tt.subgroup_orbit([base3], 30*orbsize, dehn_gens=[], braid_gens=[12,3,6,9])
+threes = tt.subgroup_orbit([base3], 50*orbsize, dehn_gens=[], braid_gens=[12,3,6,9])
 #  fours = tt.subgroup_orbit( [base4], orbsize, dehn_gens=[a1,a6,a9], braid_gens=[12,3])
 fours = tt.mod_orbit([base4], orbsize)
 print('Sort these loopy boys')
@@ -96,15 +96,16 @@ try:
             if a+b not in known_intersections:
                 if not tt.obvious_intersection(a, b):
                     print(foo, ' of ', n3, ' and ', bar, 'of', n4)
-                    it=tt.geo_intersect( a, b)
-                    fileis.write(str(it)+'\n')
-                    stra = str(a)
-                    fileis.write(stra[1:-1]+'\n')
-                    strb = str(b)
-                    fileis.write(strb[1:-1]+'\n')
+                    # it=tt.geo_intersect( a, b)
+                    if tt.is_disjoint_curves(a,b):
+                        it=0
+                        fileis.write(str(it)+'\n')
+                        stra = str(a)
+                        fileis.write(stra[1:-1]+'\n')
+                        strb = str(b)
+                        fileis.write(strb[1:-1]+'\n')
     fileis.close()
 except KeyboardInterrupt:
     fileis.close()
     print('No worries Ill jot this down.')
-
 
