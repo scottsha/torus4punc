@@ -711,7 +711,6 @@ def arctwist( cpat, a0, a1, power=1, cpts=False ):
 
 def dehn_twist( cpat,  bpat, power=1 ):
     #Compute the power-th dehn twist of b about c    T_c(b)
-    #with c middle embeddec and b side embedded
     seq=[]
     curve_pts = tri_pt_seq_curve(cpat)
     a = trisequence_curve(bpat)
@@ -882,6 +881,7 @@ for midsq in range(1,13):
     obv_isect_pairs.append((dwn,upp))
 
 def arc_find( sub, a):
+    #check if a cetain subarc is in a curve
     x=sub[0]
     y=sub[1]
     z=sub[2]

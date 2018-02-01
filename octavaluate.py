@@ -82,10 +82,10 @@ for foo,oct in enumerate(octagons):
     observe_ptype.add(pttype)
     if ittype not in observe_itype:
         observe_itype.add(ittype)
-        # print('oct number', foo)
-        # print(ittype, pttype)
-        # print(oct)
-        # print('/n')
+        print('oct number', foo)
+        print(ittype, pttype)
+        print(oct)
+        print('/n')
     if len(set(pttype))==2 and (ittype[4]>10 or ittype[5]>10):
         print(ittype, pttype)
         print(oct)

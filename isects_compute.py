@@ -61,8 +61,8 @@ print('Thinking of curves')
 # threes = tt.mod_orbit( [wild,anice3,buck,style,cryal,mile,bile,qile], orbsize)
 # dehn_gens=[], braid_gens=[12,3,6,9,2,5,8,11] )
 # threes = tt.mod_orbit( [base3], orbsize)
-orbsize = 100
-threes = tt.subgroup_orbit([base3], 50*orbsize, dehn_gens=[], braid_gens=[12,3,6,9])
+orbsize = 4
+threes = tt.subgroup_orbit([base3], 500*orbsize, dehn_gens=[], braid_gens=[12,3,6,9])
 #  fours = tt.subgroup_orbit( [base4], orbsize, dehn_gens=[a1,a6,a9], braid_gens=[12,3])
 fours = tt.mod_orbit([base4], orbsize)
 print('Sort these loopy boys')
@@ -89,8 +89,8 @@ known_intersections = set([tuple(foo[1::]) for foo in knownlist])
 
 try:
     fileis = open('extraisects'+timestr+'.txt','a')
-    for bar in range(n4):
-        for foo in range(n3):
+    for foo in range(n3):
+        for bar in range(n4):
             a=threes[foo]
             b=fours[bar]
             if a+b not in known_intersections:
